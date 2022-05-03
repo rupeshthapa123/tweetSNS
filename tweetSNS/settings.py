@@ -25,7 +25,7 @@ SECRET_KEY = 'pdq8&y*5vq89p6b6t9qk)!kax#m!u_%1^3155(sm4m-pc5tq(h'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost']
+ALLOWED_HOSTS = [ '127.0.0.1', 'localhost' ]
 LOGIN_URL = "/login"
 
 MAX_TWEET_LENGTH = 240
@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     # internal
+    'accounts',
+    'profiles',
     'tweets',
 ]
 
@@ -63,7 +65,7 @@ ROOT_URLCONF = 'tweetSNS.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,"templates")],
+        'DIRS': [os.path.join(BASE_DIR,"template")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -128,6 +130,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [os.path.join(BASE_DIR / "static")]
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static-root")
+
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/.*$'
 
@@ -137,14 +143,19 @@ DEFAULT_RENDERER_CLASSES = [
         'rest_framework.renderers.JSONRenderer'
     ]
 
+DEFAULT_AUTHENTICATION_CLASSES = [
+        'rest_framework.authentication.SessionAuthentication'
+]
+
 if DEBUG:
     DEFAULT_RENDERER_CLASSES += [
         'rest_framework.renderers.BrowsableAPIRenderer',
     ]
+    DEFAULT_AUTHENTICATION_CLASSES += [
+        'tweetSNS.rest_api.dev.DevAuthentication'
+    ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication'
-    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': DEFAULT_AUTHENTICATION_CLASSES,
     'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES
 }

@@ -14,5 +14,3 @@ class TweetForm(forms.ModelForm):
         if len(content) > MAX_TWEET_LENGTH:
             raise forms.ValidationError("This tweet is too long")
         return content
-
-        

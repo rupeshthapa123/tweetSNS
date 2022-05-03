@@ -1,57 +1,58 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react'
+import { TweetCreate } from './create'
+import { TweetsList } from './list'
+import {Tweet} from './detail'
+import { apiTweetDetail } from './lookup'
+import { FeedList } from './feed'
 
-import { loadTweets } from '../lookup';
-
-export function TweetsList(props) {
-    const [tweets, setTweets] = useState([])
-
-    useEffect(() => {
-        const myCallback = (response, status) => {
-            if (status === 200) {
-                setTweets(response)
-            } else {
-                alert("There was an error")
-            }
-        }
-        loadTweets(myCallback)
-    }, [])
-    return tweets.map((item, index) => {
-        return <Tweet tweet={item} className='my-5 py-5 border bg-white text-dark' key={`${index}-{item.id}`} />
-    })
-}  
-
-export function ActionBtn(props) {
-    const { tweet, action } = props
-    const [likes, setLikes] = useState(tweet.likes? tweet.likes : 0)
-    const [userLike, setUserLike] = useState(tweet.userLike === true ? true:false)
-    const className = props.className ? props.className : 'btn btn-primary btn-sm'
-    const actionDisplay = action.display ? action.display : 'Action'
-    
-    const handleClick = (event) => {
-        event.preventDefault()
-        if(action.type === 'like') {
-            if(userLike === true){
-                setLikes(likes - 1)
-                setUserLike(false)
-            }else{
-                setLikes(likes+1)
-                setUserLike(true)
-            }
-        }
+export function FeedComponent(props) {
+    const [newTweets, setNewTweets] = useState([])
+    const canTweet = props.canTweet === "false" ? false : true
+    const handleNewTweet = (newTweet) => {
+        // backend api handler
+        let tempNewTweets = [...newTweets]
+        tempNewTweets.unshift(newTweet)
+        setNewTweets(tempNewTweets)
     }
-    const display = action.type === 'like' ? `${likes} ${action.display}`: actionDisplay
-    return <button className={className} onClick={handleClick}>{display}</button>
+    return <div className={props.className}>
+        {canTweet === true && <TweetCreate didTweet={handleNewTweet} className='col-12 mb-3' />}
+        <FeedList newTweets={newTweets} {...props} />
+    </div>
 }
 
-export function Tweet(props) {
-    const { tweet } = props
-    const className = props.className ? props.className : 'col-10 mx-auto col-md-6'
-    return <div className={className}>
-        <p>{tweet.id} - {tweet.content}</p>
-        <div className='btn btn-group'>
-            <ActionBtn tweet={tweet} action={{ type: "like", display:"Likes" }} />
-            <ActionBtn tweet={tweet} action={{ type: "unlike", display:"UnLike" }} />
-            <ActionBtn tweet={tweet} action={{ type: "retweet", display:"Retweet" }} />
-        </div>
+export function TweetsComponent(props) {
+    const [newTweets, setNewTweets] = useState([])
+    const canTweet = props.canTweet === "false" ? false : true
+    const handleNewTweet = (newTweet) => {
+        // backend api handler
+        let tempNewTweets = [...newTweets]
+        tempNewTweets.unshift(newTweet)
+        setNewTweets(tempNewTweets)
+    }
+    return <div className={props.className}>
+        {canTweet === true && <TweetCreate didTweet={handleNewTweet} className='col-12 mb-3' />}
+        <TweetsList newTweets={newTweets} {...props} />
     </div>
+}
+
+export function TweetDetailComponent(props){
+    const {tweetId} = props
+    const [didLookup, setDidLookup] = useState(false)
+    const [tweet, setTweet] = useState(null)
+
+    const handleBackendLookup = (response, status) => {
+        if (status === 200){
+            setTweet(response)
+        } else {
+            alert("There was an error finding your tweet.")
+        }
+    }
+    useEffect(() =>{
+        if (didLookup === false){
+            apiTweetDetail(tweetId, handleBackendLookup)
+            setDidLookup(true)
+        }
+    },[tweetId,didLookup, setDidLookup])
+
+    return tweet === null ? null : <Tweet tweet = {tweet} className={props.className}/>
 }
