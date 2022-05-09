@@ -25,7 +25,7 @@ SECRET_KEY = 'pdq8&y*5vq89p6b6t9qk)!kax#m!u_%1^3155(sm4m-pc5tq(h'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [ '127.0.0.1', 'localhost' ]
+ALLOWED_HOSTS = [ '127.0.0.1', 'localhost', 'clonetwtsns.herokuapp.com' ]
 LOGIN_URL = "/login"
 
 MAX_TWEET_LENGTH = 240
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -84,10 +85,21 @@ WSGI_APPLICATION = 'tweetSNS.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    'default' : {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME' : 'd8uor1n1g2ib3d',
+        'HOST' : 'ec2-44-196-223-128.compute-1.amazonaws.com',
+        'USER' : 'rzdeudacdixfrh',
+        'PORT' : '5432',
+        'PASSWORD' : 'a3640bb7ea23e67f0ef478c204748f6b06a20926bd00c8fa585167b74d05a322'
     }
 }
 

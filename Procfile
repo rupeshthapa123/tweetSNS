@@ -1,0 +1,1 @@
+web: gunicorn tweetSNS.wsgi --log-file=-
